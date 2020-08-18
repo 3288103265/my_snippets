@@ -21,7 +21,7 @@ import torch.nn.functional as F
 from sg2im.layers import get_normalization_2d
 from sg2im.layers import get_activation
 from sg2im.utils import timeit, lineno, get_gpu_memory
-
+ 
 
 """
 Cascaded refinement network architecture, as described in:
@@ -38,13 +38,18 @@ class RefinementModule(nn.Module):
     super(RefinementModule, self).__init__()
     
     layers = []
+    # input layer.
+    # 2x downsampling
     layers.append(nn.Conv2d(layout_dim + input_dim, output_dim,
                             kernel_size=3, padding=1))
     layers.append(get_normalization_2d(output_dim, normalization))
     layers.append(get_activation(activation))
+    # intermediate layer.
+    # 2x downsampling
     layers.append(nn.Conv2d(output_dim, output_dim, kernel_size=3, padding=1))
     layers.append(get_normalization_2d(output_dim, normalization))
     layers.append(get_activation(activation))
+    
     layers = [layer for layer in layers if layer is not None]
     for layer in layers:
       if isinstance(layer, nn.Conv2d):
@@ -59,10 +64,16 @@ class RefinementModule(nn.Module):
       factor = round(HH // H)
       assert HH % factor == 0
       assert WW % factor == 0 and WW // factor == W
+      # downsampling such that has the same size with feats
       layout = F.avg_pool2d(layout, kernel_size=factor, stride=factor)
+    # cat in channel dim.
     net_input = torch.cat([layout, feats], dim=1)
     out = self.net(net_input)
     return out
+  # ??? return 4x dowmsampling ??
+  # but the results show that shape is the same.
+  # right!!, beacause the stride of conv is 1, so conv do not change the shape of input.
+  # The module dont change input shape(H and W).
 
 
 class RefinementNetwork(nn.Module):
@@ -104,6 +115,7 @@ class RefinementNetwork(nn.Module):
 
     feats = torch.zeros(N, 1, input_H, input_W).to(layout)
     for mod in self.refinement_modules:
+      # 2x unsample
       feats = F.upsample(feats, scale_factor=2, mode='nearest')
       feats = mod(layout, feats)
 
