@@ -1,0 +1,1 @@
+MASTER_ADDR=localhost MASTER_PORT=8888 python DDP.py -g=4
