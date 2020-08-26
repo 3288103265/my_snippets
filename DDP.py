@@ -12,18 +12,20 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('-n', '--nodes', default=1, type=int, metavar='N',
                         help='number of data loading workers (default: 4)')
-    parser.add_argument('-g', '--gpus', default=1, type=int,
+    parser.add_argument('-g', '--gpus', default=4, type=int,
                         help='number of gpus per node')
     parser.add_argument('-nr', '--nr', default=0, type=int,
                         help='ranking within the nodes')
     parser.add_argument('--epochs', default=2, type=int, metavar='N',
                         help='number of total epochs to run')
     args = parser.parse_args()
-    # 提前设置参数， os里面的参数 也可以在shell里面设置。export MASTER_ADDR=10.57.23.164
+    # 提前设置参数， os里面的参数 也可以在shell里面设置。export MASTER_ADDR=localhost
+    # 不用export也可以啊
     ###########################################################
     args.world_size = args.gpus * args.nodes
-    os.environ['MASTER_ADDR'] = '10.57.23.164'
-    os.environ['MASTER_PORT'] = '8888'
+    # os.environ['MASTER_ADDR'] = '10.57.23.164' #局域网地址
+    # os.environ['MASTER_ADDR'] = '127.0.0.1'
+    # os.environ['MASTER_PORT'] = '8888'
     mp.spawn(train, nprocs=args.gpus, args=(args,))
     ###########################################################
 
