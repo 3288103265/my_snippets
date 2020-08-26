@@ -18,16 +18,20 @@ def main():
                         help='ranking within the nodes')
     parser.add_argument('--epochs', default=2, type=int, metavar='N',
                         help='number of total epochs to run')
+    # must pass 'local_rank' to launch torch.distributed.launch
+    parser.add_argument('--local_rank', default=0, type=int)
     args = parser.parse_args()
     # 提前设置参数， os里面的参数 也可以在shell里面设置。export MASTER_ADDR=localhost
     # 不用export也可以啊
     ###########################################################
-    args.world_size = args.gpus * args.nodes
+    # args.world_size = args.gpus * args.nodes
     # os.environ['MASTER_ADDR'] = '10.57.23.164' #局域网地址
     # os.environ['MASTER_ADDR'] = '127.0.0.1'
     # os.environ['MASTER_PORT'] = '8888'
-    mp.spawn(train, nprocs=args.gpus, args=(args,))
+    # mp.spawn(train, nprocs=args.gpus, args=(args,)) # entrance.
     ###########################################################
+    # using python -m torhch.distributed.launch in command line.
+    train(args.local_rank, args)
 
 class ConvNet(nn.Module):
     def __init__(self, num_classes=10):
@@ -55,7 +59,7 @@ class ConvNet(nn.Module):
 def train(gpu_id, args):
     ########################在训练时候再次设置###################################
     rank = args.nr * args.gpus + gpu_id
-    dist.init_process_group(backend='nccl', init_method='env://', world_size=args.world_size, rank=rank)
+    dist.init_process_group(backend='nccl', init_method='env://')
     torch.manual_seed(0)
     model = ConvNet()
     torch.cuda.set_device(gpu_id)
@@ -76,7 +80,6 @@ def train(gpu_id, args):
                                                
     ######################使用分布式sampler####################################
     train_sampler = torch.utils.data.distributed.DistributedSampler(train_dataset,
-                                                                    num_replicas=args.world_size,
                                                                     rank=rank)
     train_loader = torch.utils.data.DataLoader(dataset=train_dataset,
                                                batch_size=batch_size,
