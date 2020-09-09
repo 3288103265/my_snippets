@@ -22,8 +22,8 @@ def main():
     # 提前设置参数， os里面的参数 也可以在shell里面设置。export MASTER_ADDR=10.57.23.164
     ###########################################################
     args.world_size = args.gpus * args.nodes
-    os.environ['MASTER_ADDR'] = '10.57.23.164'
-    os.environ['MASTER_PORT'] = '8888'
+    # os.environ['MASTER_ADDR'] = '10.57.23.164'
+    # os.environ['MASTER_PORT'] = '8888'
     mp.spawn(train, nprocs=args.gpus, args=(args,))
     ###########################################################
 
