@@ -4,3 +4,4 @@ data/
 runs/
 .vscode/
 *.train
+lightning_logs/
