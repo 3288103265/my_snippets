@@ -20,7 +20,7 @@ from einops import rearrange
 
 # DataModule
 class MNISTDataModule(pl.LightningDataModule):
-    def __init__(self, data_dir='./data', batch_size=64, num_workers=20):
+    def __init__(self, data_dir='./data', batch_size=256, num_workers=20):
         super().__init__()
         self.data_dir = data_dir
         self.batch_size = batch_size
@@ -52,10 +52,10 @@ class MNISTDataModule(pl.LightningDataModule):
                 self.data_dir, train=False, transform=self.transform)
 
     def train_dataloader(self):
-        return DataLoader(self.mnist_train, batch_size=self.batch_size, num_workers=self.num_workers)
+        return DataLoader(self.mnist_train, batch_size=self.batch_size, num_workers=self.num_workers, drop_last=True)
 
     def val_dataloader(self):
-        return DataLoader(self.mnist_val, batch_size=self.batch_size, num_workers=self.num_workers)
+        return DataLoader(self.mnist_val, batch_size=self.batch_size, num_workers=self.num_workers, drop_last=True)
 
     def test_dataloader(self):
         return DataLoader(self.mnist_test, batch_size=self.batch_size, num_workers=self.num_workers)
@@ -122,7 +122,7 @@ class GAN(pl.LightningModule):
         lr: float = 0.0002,
         b1: float = 0.5,
         b2: float = 0.999,
-        batch_size: int = 64,
+        batch_size: int = 256,
         **kwargs
     ):
         super().__init__()
@@ -142,7 +142,9 @@ class GAN(pl.LightningModule):
         return self.generator(z)
 
     def adversarial_loss(self, y_hat, y):
-        return F.binary_cross_entropy(y_hat, y)
+        # print(y_hat)
+        # print(y.shape)
+        return F.binary_cross_entropy(y_hat.view(self.hparams.batch_size, 1), y.view((self.hparams.batch_size, 1)))
 
     def training_step(self, batch, batch_idx, optimizer_idx):
         imgs, _ = batch
@@ -218,11 +220,13 @@ class GAN(pl.LightningModule):
         grid = torchvision.utils.make_grid(sample_imgs)
         self.logger.experiment.add_image(
             'generated_images', grid, self.current_epoch)
-        
+
+
 if __name__ == "__main__":
     dm = MNISTDataModule()
     # dm.setup()
     print(dm.size())
     model = GAN(*dm.size())
-    trainer = pl.Trainer(gpus='0,4', max_epochs=5, progress_bar_refresh_rate=20)
+    trainer = pl.Trainer(gpus='6', max_epochs=500000,
+                         progress_bar_refresh_rate=20)
     trainer.fit(model, dm)
