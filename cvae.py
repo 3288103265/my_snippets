@@ -1,3 +1,4 @@
+# Taken from: https://github.com/AntixK/Pytorch-VAE
 import torch
 from models import BaseVAE
 from torch import nn
