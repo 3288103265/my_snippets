@@ -2,6 +2,6 @@
 .ipynb_checkpoints
 data/
 runs/
-.vscode/
+# .vscode/
 *.train
 lightning_logs/
