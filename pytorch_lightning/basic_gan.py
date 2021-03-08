@@ -20,7 +20,7 @@ from einops import rearrange
 
 # DataModule
 class MNISTDataModule(pl.LightningDataModule):
-    def __init__(self, data_dir='./data', batch_size=256, num_workers=20):
+    def __init__(self, data_dir='../data', batch_size=256, num_workers=20):
         super().__init__()
         self.data_dir = data_dir
         self.batch_size = batch_size
