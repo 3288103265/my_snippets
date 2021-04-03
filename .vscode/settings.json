@@ -1,4 +1,4 @@
 {
-    "python.pythonPath": "/home/wangph/miniconda3/bin/python",
+    "python.pythonPath": "/opt/conda/bin/python",
     "workbench.colorTheme": "One Dark Pro"
 }
