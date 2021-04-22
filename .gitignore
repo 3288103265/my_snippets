@@ -5,3 +5,6 @@ runs/
 # .vscode/
 *.train
 lightning_logs/
+pytorch/.vector_cache/glove.840B.300d.txt
+pytorch/.vector_cache/glove.840B.300d.txt.pt
+pytorch/.vector_cache/glove.840B.300d.zip
