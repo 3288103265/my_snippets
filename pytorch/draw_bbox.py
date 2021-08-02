@@ -6,7 +6,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 from typing import List, Tuple, Optional, Union
 from PIL import Image, ImageDraw, ImageFont, ImageColor 
-
+import numpy as np
 
 @torch.no_grad()
 def draw_bounding_boxes(
