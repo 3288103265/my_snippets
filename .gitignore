@@ -3,6 +3,7 @@
 data/
 runs/
 # .vscode/
+.idea/
 *.train
 lightning_logs/
 pytorch/.vector_cache/glove.840B.300d.txt
