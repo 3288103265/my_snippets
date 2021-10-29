@@ -2,6 +2,13 @@
 .ipynb_checkpoints
 data/
 runs/
-.vscode/
+# .vscode/
 *.train
 lightning_logs/
+pytorch/.vector_cache/glove.840B.300d.txt
+pytorch/.vector_cache/glove.840B.300d.txt.pt
+pytorch/.vector_cache/glove.840B.300d.zip
+.idea/workspace.xml
+.vscode/settings.json
+.idea/workspace.xml
+.vscode/settings.json
