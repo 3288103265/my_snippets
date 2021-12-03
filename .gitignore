@@ -3,6 +3,7 @@
 data/
 runs/
 # .vscode/
+.idea/
 *.train
 lightning_logs/
 pytorch/.vector_cache/glove.840B.300d.txt
@@ -11,4 +12,5 @@ pytorch/.vector_cache/glove.840B.300d.zip
 .idea/workspace.xml
 .vscode/settings.json
 .idea/workspace.xml
+.vscode/settings.json
 .vscode/settings.json
